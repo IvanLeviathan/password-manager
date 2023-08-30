@@ -1,12 +1,16 @@
 import express from 'express'
 import userRoutes from './routes/user'
-
+import bodyParser from 'body-parser'
 const app = express()
 const port = process.env.BACKEND_PORT || 5000
 
-app.get('/', (request, response) => {
-  response.send('Hello world!')
-})
+// configure the app to use bodyParser()
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  }),
+)
+app.use(bodyParser.json())
 
 app.use('/api/users', userRoutes)
 
