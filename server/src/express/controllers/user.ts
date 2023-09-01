@@ -3,35 +3,36 @@ import UserModel from '../../db/models/user'
 import { isValidObjectId } from 'mongoose'
 import crypto from 'crypto'
 import md5 from 'md5'
+import PasswordModel from '../../db/models/password'
+import ProjectModel from '../../db/models/project'
 /**
  * Get user by id
  * @param req Requset
  * @param res Response
  * @returns IUser | Response
  */
-export const getUserById = async (
+export const getUser = async (
   req: Request,
   res: Response,
 ): Promise<Response> => {
-  if (!req.params.id) {
-    return res.status(500).json({
-      status: 500,
+  if (!req.body.user?.id) {
+    return res.status(400).json({
+      status: 400,
       message: 'NoUserIdProvided',
     })
   }
-
-  if (!isValidObjectId(req.params.id)) {
-    return res.status(500).json({
-      status: 500,
+  if (!isValidObjectId(req.body.user.id)) {
+    return res.status(400).json({
+      status: 400,
       message: 'NotValidId',
     })
   }
 
-  const user = await UserModel.findById(req.params.id)
+  const user = await UserModel.findById(req.body.user.id)
     .exec()
     .catch((e) => {
-      return res.status(500).json({
-        status: 500,
+      return res.status(400).json({
+        status: 400,
         message: 'Error',
         data: e,
       })
@@ -63,8 +64,8 @@ export const getUsers = async (
   const users = await UserModel.find()
     .exec()
     .catch((e) => {
-      return res.status(500).json({
-        status: 500,
+      return res.status(400).json({
+        status: 400,
         message: 'Error',
         data: e,
       })
@@ -86,22 +87,22 @@ export const createUser = async (
   res: Response,
 ): Promise<Response> => {
   if (!req.body?.email) {
-    return res.status(500).json({
-      status: 500,
+    return res.status(400).json({
+      status: 400,
       message: 'NoUserEmailProvided',
     })
   }
 
   if (!req.body?.login) {
-    return res.status(500).json({
-      status: 500,
+    return res.status(400).json({
+      status: 400,
       message: 'NoUserLoginProvided',
     })
   }
 
   if (!req.body?.password) {
-    return res.status(500).json({
-      status: 500,
+    return res.status(400).json({
+      status: 400,
       message: 'NoUserPasswordProvided',
     })
   }
@@ -109,8 +110,8 @@ export const createUser = async (
   const validEmailRegex =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   if (!req.body?.email.match(validEmailRegex)) {
-    return res.status(500).json({
-      status: 500,
+    return res.status(400).json({
+      status: 400,
       message: 'InvalidEmail',
     })
   }
@@ -159,8 +160,8 @@ export const createUser = async (
       data: saveRes,
     })
   } else {
-    return res.status(500).json({
-      status: 500,
+    return res.status(400).json({
+      status: 400,
       message: 'UserNotCreated',
     })
   }
@@ -176,18 +177,16 @@ export const updateUser = async (
   req: Request,
   res: Response,
 ): Promise<Response> => {
-  // TODO check for UPDATE permissions (JWT token?)
-
-  if (!req.body?._id) {
-    return res.status(500).json({
-      status: 500,
+  if (!req.body?.user?.id) {
+    return res.status(400).json({
+      status: 400,
       message: 'NoUserIdProvided',
     })
   }
 
   if (!req.body?.email) {
-    return res.status(500).json({
-      status: 500,
+    return res.status(400).json({
+      status: 400,
       message: 'NoUserEmailProvided',
     })
   }
@@ -229,7 +228,7 @@ export const updateUser = async (
   }
 
   const updatedUser = await UserModel.findByIdAndUpdate(
-    req.body._id,
+    req.body.user.id,
     updateObj,
     { new: true },
   )
@@ -243,9 +242,9 @@ export const updateUser = async (
       data: updatedUser,
     })
   } else {
-    return res.status(500).json({
-      status: 500,
-      message: 'UserNotUpdated',
+    return res.status(400).json({
+      status: 400,
+      message: 'UserNotFoundForUpdate',
     })
   }
 }
@@ -260,21 +259,31 @@ export const deleteUser = async (
   req: Request,
   res: Response,
 ): Promise<Response> => {
-  // TODO check for DELETE permissions (JWT token?)
-
-  if (!req.body?._id) {
-    return res.status(500).json({
-      status: 500,
+  if (!req.body.user.id) {
+    return res.status(400).json({
+      status: 400,
       message: 'NoUserIdProvided',
     })
   }
 
-  const deleteRes = await UserModel.findByIdAndDelete(req.body._id)
+  const deleteRes = await UserModel.findByIdAndDelete(req.body.user.id)
     .exec()
     .catch((e) => console.log(e))
 
   if (!!deleteRes?._id) {
-    // TODO delete all stored passwords by deleteRes._id
+    //delete projects which this user owner
+    await ProjectModel.deleteMany({
+      owner: req.body.user.id,
+    })
+      .exec()
+      .catch((e) => console.log(e))
+    //delete passwords which this user owner
+    await PasswordModel.deleteMany({
+      owner: req.body.user.id,
+    })
+      .exec()
+      .catch((e) => console.log(e))
+
     return res.status(200).json({
       status: 200,
       message: 'UserDeleted',

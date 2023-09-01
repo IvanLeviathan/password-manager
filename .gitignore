@@ -2,3 +2,4 @@ node_modules
 dist
 .env
 mongodb4
+yarn-error.log

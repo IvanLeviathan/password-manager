@@ -2,29 +2,30 @@ import Router from 'express'
 import {
   createUser,
   deleteUser,
-  getUserById,
+  getUser,
   getUsers,
   updateUser,
 } from '../controllers/user'
+import { authMiddleware } from '../middleware/auth.middleware'
 const userRoutes = Router()
 
-userRoutes.get('/:id', (req, res) => {
-  getUserById(req, res)
+userRoutes.get('/', authMiddleware, (req, res) => {
+  getUser(req, res)
 })
 
-userRoutes.get('/', (req, res) => {
-  getUsers(req, res)
-})
+// userRoutes.get('/', authMiddleware, (req, res) => {
+//   getUsers(req, res)
+// })
 
 userRoutes.post('/', (req, res) => {
   createUser(req, res)
 })
 
-userRoutes.put('/', (req, res) => {
+userRoutes.put('/', authMiddleware, (req, res) => {
   updateUser(req, res)
 })
 
-userRoutes.delete('/', (req, res) => {
+userRoutes.delete('/', authMiddleware, (req, res) => {
   deleteUser(req, res)
 })
 

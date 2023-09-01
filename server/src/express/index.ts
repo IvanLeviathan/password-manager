@@ -1,6 +1,9 @@
 import express from 'express'
 import userRoutes from './routes/user'
 import bodyParser from 'body-parser'
+import authRoutes from './routes/auth'
+import projectsRoutes from './routes/project'
+import passwordRoutes from './routes/password'
 const app = express()
 const port = process.env.BACKEND_PORT || 5000
 
@@ -12,7 +15,11 @@ app.use(
 )
 app.use(bodyParser.json())
 
+//routes
+app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
+app.use('/api/projects', projectsRoutes)
+app.use('/api/password', passwordRoutes)
 
 export default async function startServer() {
   app.listen(port, () => {
