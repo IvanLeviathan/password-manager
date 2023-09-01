@@ -1,15 +1,33 @@
-import React, { FC } from 'react'
+import { FC, useContext } from 'react'
 import './style.scss'
 import { Link } from 'react-router-dom'
+import { Navbar, Container, Nav } from 'react-bootstrap'
+import ChangeLanguageComponent from '../changeLanguage'
+import SwitchThemeComponent from '../switchTheme'
+import MainContext from '../../context/main'
 
 interface IHeader {}
 const HeaderComponent: FC<IHeader> = () => {
+  const context = useContext(MainContext)
   return (
-    <div>
-      <Link to={'/'}>Главная</Link>
-      <Link to={'/projects'}>Проекты</Link>
-      <Link to={'/projects/321'}>Проект</Link>
-    </div>
+    <Navbar variant={context?.theme} bg={context?.theme} expand="lg">
+      <Container fluid>
+        <Navbar.Brand href="/">Password Manager</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav>
+            <Link to={'/'} className="nav-link">
+              Главная
+            </Link>
+            <Link to={'/profile'} className="nav-link">
+              Профиль
+            </Link>
+            <SwitchThemeComponent />
+            <ChangeLanguageComponent />
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   )
 }
 

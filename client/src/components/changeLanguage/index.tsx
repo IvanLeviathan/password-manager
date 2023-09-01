@@ -1,13 +1,14 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState, useContext } from 'react'
 import { NavDropdown } from 'react-bootstrap'
 import { languageLabels } from '../../i18n/resources'
 import './style.scss'
 import i18next from 'i18next'
+import MainContext from '../../context/main'
 
 interface IChangeLang {}
 const ChangeLanguageComponent: FC<IChangeLang> = () => {
   const [curLangObj, setCurLangObj] = useState(languageLabels[0])
-
+  const context = useContext(MainContext)
   useEffect(() => {
     changeCurrentLanguage(i18next.language)
   }, [])
@@ -36,7 +37,7 @@ const ChangeLanguageComponent: FC<IChangeLang> = () => {
   return (
     <div className="languageChanger">
       <NavDropdown
-        menuVariant="dark"
+        menuVariant={context?.theme}
         id="dropdown-language"
         title={dropDownIcon()}
       >

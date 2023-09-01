@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import './App.scss'
 import AlertsComponent from './components/alerts'
 import AuthComponent from './components/auth'
-import MainContext, { IAlert, IUser } from './context/main'
+import MainContext, { IAlert, IUser, TTheme } from './context/main'
 import './i18n'
 import apiRequest from './utils/apiRequest'
 import MainPages from './components/pages'
@@ -10,6 +10,7 @@ import MainPages from './components/pages'
 function App() {
   const [alerts, setAlerts] = useState<IAlert[]>([])
   const [user, setUser] = useState<IUser | null>(null)
+  const [curTheme, setCurTheme] = useState<TTheme>('dark')
 
   const addAlert = (alert: IAlert) => {
     alert.id = new Date().getTime().toString()
@@ -47,9 +48,22 @@ function App() {
     }, 10 * 1000)
   }, [])
 
+  const changeTheme = (theme: TTheme) => {
+    document.documentElement.setAttribute('data-bs-theme', theme)
+    setCurTheme(theme)
+  }
+
   return (
     <MainContext.Provider
-      value={{ alerts: alerts, addAlert, removeAlert, getUser, user }}
+      value={{
+        alerts: alerts,
+        addAlert,
+        removeAlert,
+        getUser,
+        user,
+        theme: curTheme,
+        changeTheme,
+      }}
     >
       <div className="bg-body-tertiary">
         {!user ? <AuthComponent /> : <MainPages />}

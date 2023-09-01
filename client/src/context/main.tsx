@@ -22,12 +22,16 @@ export interface IUser {
   salt: string
 }
 
+export type TTheme = 'dark' | 'light'
+
 interface IContext {
   alerts: IAlert[] | []
   addAlert: (alert: IAlert) => void
   removeAlert: (alertId: string) => void
   getUser: () => void
   user: IUser | null
+  theme: TTheme
+  changeTheme: (theme: TTheme) => void
 }
 
 const MainContext = createContext<IContext | null>(null)

@@ -1,25 +1,29 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import { NavDropdown } from 'react-bootstrap'
 import './style.scss'
 import sunIcon from '../../assets/images/icons/sun.png'
 import moonIcon from '../../assets/images/icons/moon.png'
+import MainContext, { TTheme } from '../../context/main'
 
 interface ISwitchTheme {}
 
 const themeKey = 'theme'
-const defaultTheme = 'dark'
+const defaultTheme: TTheme = 'dark'
 
 const SwitchThemeComponent: FC<ISwitchTheme> = () => {
-  const [curTheme, setCurTheme] = useState(defaultTheme)
+  const [curTheme, setCurTheme] = useState<TTheme>(defaultTheme)
+  const context = useContext(MainContext)
 
   useEffect(() => {
-    const localStorageTheme = localStorage.getItem(themeKey) || curTheme
+    const localStorageTheme: TTheme =
+      (localStorage.getItem(themeKey) as TTheme) || curTheme
     changeTheme(localStorageTheme)
   }, [])
-  const changeTheme = (theme: string) => {
+  const changeTheme = (theme: TTheme) => {
     localStorage.setItem(themeKey, theme)
     setCurTheme(theme)
-    document.documentElement.setAttribute('data-bs-theme', theme)
+
+    context?.changeTheme(theme)
   }
 
   const dropDownIcon = () => {
@@ -30,7 +34,7 @@ const SwitchThemeComponent: FC<ISwitchTheme> = () => {
   return (
     <div className="themeSwitcher">
       <NavDropdown
-        menuVariant="dark"
+        menuVariant={context?.theme}
         id="dropdown-language"
         title={dropDownIcon()}
       >
