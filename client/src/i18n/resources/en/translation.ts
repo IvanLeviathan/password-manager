@@ -8,6 +8,11 @@ const en = {
       passwordPlaceholder: 'Enter password',
       submit: 'Submit',
     },
+    apiAnswers: {
+      ERR_NETWORK: 'Network Error',
+      InvalidLoginOrPassword: 'Invalid login or password. Please try again.',
+      successLogin: 'Success login',
+    },
   },
 }
 export default en

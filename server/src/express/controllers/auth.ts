@@ -29,7 +29,9 @@ export const loginController = async (req: Request, res: Response) => {
     const token = jwt.sign({ id: user._id }, `${process.env.JWT_SECRET}`, {
       expiresIn: 86400, // Expires in 24 hours
     })
-    return res.status(200).json({ status: 200, message: token })
+    return res
+      .status(200)
+      .json({ status: 200, message: 'successLogin', data: token })
   } catch (err) {
     console.error(err)
     return res.status(400).json({

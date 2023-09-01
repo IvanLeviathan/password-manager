@@ -1,4 +1,5 @@
 import express from 'express'
+import cors from 'cors'
 import userRoutes from './routes/user'
 import bodyParser from 'body-parser'
 import authRoutes from './routes/auth'
@@ -14,6 +15,7 @@ app.use(
   }),
 )
 app.use(bodyParser.json())
+app.use(cors())
 
 //routes
 app.use('/api/auth', authRoutes)

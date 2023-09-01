@@ -1,19 +1,33 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useContext } from 'react'
 import './style.scss'
 import { Card, Container, Row, Col, Form, Button } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import ChangeLanguageComponent from '../changeLanguage'
 import SwitchThemeComponent from '../switchTheme'
+import apiRequest from '../../utils/apiRequest'
+
+import MainContext from '../../context/main'
 
 interface IAuth {}
 const AuthComponent: FC<IAuth> = () => {
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
   const { t } = useTranslation()
+  const context = useContext(MainContext)
 
-  const onClick = (e: React.MouseEvent) => {
+  const tryAuth = async (e: React.MouseEvent) => {
     if (login && password) e.preventDefault()
     else return
+
+    const res = await apiRequest('/auth/login', 'POST', { login, password })
+    context?.addAlert({
+      text: t(`apiAnswers.${res.message}`),
+      status: res.status,
+    })
+    if (res.status === 200) {
+      localStorage.setItem('jwt', res.data)
+      context?.getUser()
+    }
   }
 
   return (
@@ -30,7 +44,9 @@ const AuthComponent: FC<IAuth> = () => {
             <Col>
               <Card className="mw-75 m-auto">
                 <Card.Body>
-                  <Card.Title>{t('authPage.auth')}</Card.Title>
+                  <Card.Title className="text-center">
+                    {t('authPage.auth')}
+                  </Card.Title>
                   <Form>
                     <Form.Group className="mb-3" controlId="login">
                       <Form.Label>{t('authPage.login')}</Form.Label>
@@ -54,7 +70,7 @@ const AuthComponent: FC<IAuth> = () => {
 
                     <Button
                       variant="primary"
-                      onClick={(e) => onClick(e)}
+                      onClick={(e) => tryAuth(e)}
                       type="submit"
                     >
                       {t('authPage.submit')}
