@@ -5,7 +5,6 @@ if (!process.env.CRYPTO_IV)
   throw new Error('Cant find CRYPTO_IV variable in .env')
 if (!process.env.CRYPTO_KEY)
   throw new Error('Cant find CRYPTO_KEY variable in .env')
-
 const initializationVector = Buffer.from(process.env.CRYPTO_IV, 'utf-8')
 const cypherKey = Buffer.from(process.env.CRYPTO_KEY, 'utf-8')
 
