@@ -4,9 +4,12 @@ import { languageLabels } from '../../i18n/resources'
 import './style.scss'
 import i18next from 'i18next'
 import MainContext from '../../context/main'
+import { DropDirection } from 'react-bootstrap/DropdownContext'
 
-interface IChangeLang {}
-const ChangeLanguageComponent: FC<IChangeLang> = () => {
+interface IChangeLang {
+  drop?: DropDirection
+}
+const ChangeLanguageComponent: FC<IChangeLang> = ({ drop = 'down' }) => {
   const [curLangObj, setCurLangObj] = useState(languageLabels[0])
   const context = useContext(MainContext)
   useEffect(() => {
@@ -40,6 +43,7 @@ const ChangeLanguageComponent: FC<IChangeLang> = () => {
         menuVariant={context?.theme}
         id="dropdown-language"
         title={dropDownIcon()}
+        drop={drop}
       >
         {languageLabels.map((lang) => {
           return (

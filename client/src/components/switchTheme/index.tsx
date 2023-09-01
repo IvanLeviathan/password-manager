@@ -4,13 +4,15 @@ import './style.scss'
 import sunIcon from '../../assets/images/icons/sun.png'
 import moonIcon from '../../assets/images/icons/moon.png'
 import MainContext, { TTheme } from '../../context/main'
-
-interface ISwitchTheme {}
+import { DropDirection } from 'react-bootstrap/DropdownContext'
+interface ISwitchTheme {
+  drop?: DropDirection
+}
 
 const themeKey = 'theme'
 const defaultTheme: TTheme = 'dark'
 
-const SwitchThemeComponent: FC<ISwitchTheme> = () => {
+const SwitchThemeComponent: FC<ISwitchTheme> = ({ drop = 'down' }) => {
   const [curTheme, setCurTheme] = useState<TTheme>(defaultTheme)
   const context = useContext(MainContext)
 
@@ -37,6 +39,7 @@ const SwitchThemeComponent: FC<ISwitchTheme> = () => {
         menuVariant={context?.theme}
         id="dropdown-language"
         title={dropDownIcon()}
+        drop={drop}
       >
         <NavDropdown.Item onClick={() => changeTheme('dark')}>
           <img className="theme-icon" src={moonIcon} alt="dark" />

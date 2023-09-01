@@ -15,15 +15,17 @@ const HeaderComponent: FC<IHeader> = () => {
         <Navbar.Brand href="/">Password Manager</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav>
+          <Nav className="me-auto">
             <Link to={'/'} className="nav-link">
               Главная
             </Link>
             <Link to={'/profile'} className="nav-link">
               Профиль
             </Link>
-            <SwitchThemeComponent />
-            <ChangeLanguageComponent />
+          </Nav>
+          <Nav>
+            <SwitchThemeComponent drop="start" />
+            <ChangeLanguageComponent drop="start" />
           </Nav>
         </Navbar.Collapse>
       </Container>
