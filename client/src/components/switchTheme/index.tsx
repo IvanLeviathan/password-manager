@@ -30,7 +30,7 @@ const SwitchThemeComponent: FC<ISwitchTheme> = ({ drop = 'down' }) => {
 
   const dropDownIcon = () => {
     const icon = curTheme === 'dark' ? moonIcon : sunIcon
-    return <img className="theme-icon me-2" src={icon} alt="Theme" />
+    return <img className="theme-icon mx-2" src={icon} alt="Theme" />
   }
 
   return (

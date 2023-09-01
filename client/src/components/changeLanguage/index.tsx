@@ -30,7 +30,7 @@ const ChangeLanguageComponent: FC<IChangeLang> = ({ drop = 'down' }) => {
   const dropDownIcon = () => {
     return (
       <img
-        className="language-icon me-2"
+        className="language-icon mx-2"
         src={curLangObj.icon}
         alt={curLangObj.label}
       />
