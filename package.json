@@ -1,0 +1,11 @@
+{
+  "name": "password-manager",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/IvanLeviathan/password-manager.git",
+  "author": "IvanLeviathan <dante100368@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "cd client && yarn install && yarn run build && cd ../server && yarn install && yarn run build && yarn run start"
+  }
+}

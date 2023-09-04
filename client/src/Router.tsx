@@ -1,12 +1,14 @@
 import { Routes, Route } from 'react-router-dom'
-import HomePage from './components/pages/home'
+import ProfilePage from './components/pages/ProfilePage'
+import HomePage from './components/pages/HomePage'
+import ProjectPage from './components/pages/ProjectPage'
 
 const Router = () => {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/projects" element={123} />
-      <Route path="/projects/:projectId" element={321} />
+      <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/projects/:projectId" element={<ProjectPage />} />
     </Routes>
   )
 }

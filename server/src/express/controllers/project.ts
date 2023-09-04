@@ -41,7 +41,9 @@ export const getProjects = async (
   res: Response,
 ): Promise<Response> => {
   const projects =
-    (await ProjectModel.find({ owner: req.body.user.id })
+    (await ProjectModel.find({ owner: req.body.user.id }, null, {
+      sort: { _id: -1 },
+    })
       .exec()
       .catch((e) => console.log(e))) || []
 

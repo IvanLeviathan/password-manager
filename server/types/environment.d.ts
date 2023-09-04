@@ -9,6 +9,7 @@ declare global {
       JWT_SECRET: string
       CRYPTO_KEY: string
       CRYPTO_IV: string
+      VITE_FRONT_API_URL: string
     }
   }
 }

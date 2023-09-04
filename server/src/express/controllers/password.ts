@@ -94,10 +94,16 @@ export const getPasswords = async (
   }
 
   let passwords: IPassword[] =
-    (await PasswordModel.find({
-      owner: req.body.user.id,
-      project: req.params.projectId,
-    })
+    (await PasswordModel.find(
+      {
+        owner: req.body.user.id,
+        project: req.params.projectId,
+      },
+      null,
+      {
+        sort: { _id: -1 },
+      },
+    )
       .exec()
       .catch((e) => console.log(e))) || []
 

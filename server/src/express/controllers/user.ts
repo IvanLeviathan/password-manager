@@ -200,7 +200,7 @@ export const updateUser = async (
       })) || []
   const existingEmail = users.find(
     (user) =>
-      user.email === req.body.email && user._id.toString() !== req.body._id,
+      user.email === req.body.email && user._id.toString() !== req.body.user.id,
   )
   if (!!existingEmail) {
     return res.status(409).json({
@@ -210,7 +210,7 @@ export const updateUser = async (
   }
 
   let updateObj = {
-    ...req.body,
+    email: req.body.email,
   }
 
   if (!!req.body?.password) {

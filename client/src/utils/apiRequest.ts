@@ -15,18 +15,25 @@ const apiRequest = async (
   additionalHeaders = { ...defaultHeaders, ...additionalHeaders }
 
   const res = await axios({
-    url: 'http://localhost:3000/api' + url,
+    // url: '//localhost:3000/api' + url,
+    url: import.meta.env.VITE_FRONT_API_URL + url,
     method,
     data,
     responseType: 'json',
     headers: additionalHeaders,
   })
-    .then((response) => response.data)
+    .then((response) => response)
     .catch((e) => {
       if (!e.response) {
-        return { status: 500, message: e.code }
+        return {
+          status: 500,
+          data: {
+            status: 500,
+            message: e.code,
+          },
+        }
       }
-      return e.response?.data
+      return e.response
     })
   return res
 }

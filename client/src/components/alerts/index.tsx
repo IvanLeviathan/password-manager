@@ -1,15 +1,16 @@
-import { FC, useContext } from 'react'
+import { FC } from 'react'
 import './style.scss'
-import MainContext from '../../context/main'
 import { Alert } from 'react-bootstrap'
 import './style.scss'
+import { useTypedSelector } from '../../hooks/useTypedSelector'
 
 interface IAlerts {}
 const AlertsComponent: FC<IAlerts> = () => {
-  const context = useContext(MainContext)
+  const { alerts } = useTypedSelector((state) => state.alerts)
+
   return (
     <div className="alerts-wrapper">
-      {context?.alerts.map((alert) => {
+      {alerts.map((alert) => {
         return (
           <Alert variant={alert.type} dismissible key={alert.id}>
             <p>{alert.text}</p>

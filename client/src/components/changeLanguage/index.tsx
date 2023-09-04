@@ -5,6 +5,7 @@ import './style.scss'
 import i18next from 'i18next'
 import MainContext from '../../context/main'
 import { DropDirection } from 'react-bootstrap/DropdownContext'
+import { useTranslation } from 'react-i18next'
 
 interface IChangeLang {
   drop?: DropDirection
@@ -12,6 +13,7 @@ interface IChangeLang {
 const ChangeLanguageComponent: FC<IChangeLang> = ({ drop = 'down' }) => {
   const [curLangObj, setCurLangObj] = useState(languageLabels[0])
   const context = useContext(MainContext)
+  const { t } = useTranslation()
   useEffect(() => {
     changeCurrentLanguage(i18next.language)
   }, [])
@@ -21,6 +23,8 @@ const ChangeLanguageComponent: FC<IChangeLang> = ({ drop = 'down' }) => {
       languageLabels.find((lang) => lang.value === newLang) || languageLabels[0] //default is english
 
     setCurLangObj(curLang)
+    document.title = t('title')
+    document.documentElement.setAttribute('lang', i18next.language)
   }
   const changeLanguage = (lang: string) => {
     i18next.changeLanguage(lang)

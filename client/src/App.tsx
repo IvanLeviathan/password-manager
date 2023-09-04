@@ -2,51 +2,48 @@ import { useEffect, useState } from 'react'
 import './App.scss'
 import AlertsComponent from './components/alerts'
 import AuthComponent from './components/auth'
-import MainContext, { IAlert, IUser, TTheme } from './context/main'
+import MainContext, { TTheme } from './context/main'
 import './i18n'
-import apiRequest from './utils/apiRequest'
 import MainPages from './components/pages'
+import { useTypedSelector } from './hooks/useTypedSelector'
+import { useTranslation } from 'react-i18next'
+import { useActions } from './hooks/useActions'
+import { Spinner } from 'react-bootstrap'
 
 function App() {
-  const [alerts, setAlerts] = useState<IAlert[]>([])
-  const [user, setUser] = useState<IUser | null>(null)
   const [curTheme, setCurTheme] = useState<TTheme>('dark')
 
-  const addAlert = (alert: IAlert) => {
-    alert.id = new Date().getTime().toString()
-    if (alert.status)
-      alert.type =
-        alert.status >= 200 && alert.status <= 299 ? 'success' : 'danger'
-    setAlerts((current) => [...current, alert])
-    if (alert.id) removeAlert(alert.id, 5 * 1000)
-  }
-
-  const removeAlert = (alertId: string, delay: number = 5 * 1000) => {
-    setTimeout(function () {
-      setAlerts((current) => {
-        const newCurrent = current.filter((alert) => alert.id !== alertId)
-        return newCurrent
-      })
-    }, delay)
-  }
-
-  const getUser = async () => {
-    const res = await apiRequest(
-      '/users/',
-      'GET',
-      {},
-      { 'x-auth-token': localStorage.getItem('jwt') },
-    )
-    if (res.status === 200) setUser(res.data)
-    else setUser(null)
-  }
+  const { error, loading, user } = useTypedSelector((state) => state.user)
+  const { fetchUser, refetchUser, addAlert } = useActions()
+  const { t } = useTranslation()
 
   useEffect(() => {
-    getUser()
-    setInterval(function () {
-      getUser()
-    }, 10 * 1000)
+    if (localStorage.getItem('jwt')) fetchUser()
   }, [])
+
+  useEffect(() => {
+    if (!user) return
+    const interval = setInterval(function () {
+      refetchUser()
+    }, 10 * 1000)
+    return () => clearInterval(interval)
+  }, [user, refetchUser])
+
+  useEffect(() => {
+    if (!error) return
+    addAlert({
+      text: t(`apiAnswers.${error.message}`),
+      type: 'danger',
+    })
+  }, [error, loading])
+
+  if (loading) {
+    return (
+      <div className="main-preloader">
+        <Spinner animation="border" />
+      </div>
+    )
+  }
 
   const changeTheme = (theme: TTheme) => {
     document.documentElement.setAttribute('data-bs-theme', theme)
@@ -56,11 +53,6 @@ function App() {
   return (
     <MainContext.Provider
       value={{
-        alerts: alerts,
-        addAlert,
-        removeAlert,
-        getUser,
-        user,
         theme: curTheme,
         changeTheme,
       }}

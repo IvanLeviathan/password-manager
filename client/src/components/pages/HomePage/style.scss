@@ -1,0 +1,10 @@
+.projects {
+  .card {
+    cursor: pointer;
+    transition: all 0.25s ease;
+    height: 100%;
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+}
