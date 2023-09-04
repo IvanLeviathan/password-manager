@@ -13,9 +13,7 @@ const AuthComponent: FC<IAuth> = () => {
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
 
-  const [signLogin, setSignLogin] = useState('')
   const [signEmail, setSignEmail] = useState('')
-  const [signPassword, setSignPassword] = useState('')
 
   const { t } = useTranslation()
   const { fetchUser, addAlert } = useActions()
@@ -39,13 +37,11 @@ const AuthComponent: FC<IAuth> = () => {
   }
 
   const tryRegister = async (e: React.MouseEvent) => {
-    if (signLogin && signEmail && signPassword) e.preventDefault()
+    if (login && signEmail && password) e.preventDefault()
     else return
-    setLogin(signLogin)
-    setPassword(signPassword)
     const res = await apiRequest('/users/', 'POST', {
-      login: signLogin,
-      password: signPassword,
+      login: login,
+      password: password,
       email: signEmail,
     })
     if (res.data?.message) {
@@ -57,7 +53,6 @@ const AuthComponent: FC<IAuth> = () => {
         tryAuth()
       }
     } else {
-      console.log(res)
       addAlert({ text: t(`apiAnswers.${res.statusText}`), type: 'danger' })
     }
   }
@@ -116,7 +111,7 @@ const AuthComponent: FC<IAuth> = () => {
               <Form.Control
                 type="text"
                 placeholder={t('authPage.loginPlaceholder')}
-                onChange={(e) => setSignLogin(e.target.value)}
+                onChange={(e) => setLogin(e.target.value)}
                 required
               />
             </Form.Group>
@@ -134,7 +129,7 @@ const AuthComponent: FC<IAuth> = () => {
               <Form.Control
                 type="password"
                 placeholder={t('authPage.passwordPlaceholder')}
-                onChange={(e) => setSignPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </Form.Group>

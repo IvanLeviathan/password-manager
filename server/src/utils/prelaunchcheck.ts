@@ -2,7 +2,7 @@ const prelaunchCheck = () => {
   const criticalVars = [
     'MONGO_DB_USER',
     'MONGO_DB_PASSWORD',
-    'MONGO_DB_PORT',
+    'MONGO_PROTOCOL',
     'MONGO_DB_HOST',
     'MONGO_DB_NAME',
     'JWT_SECRET',

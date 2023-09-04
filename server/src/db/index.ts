@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 export default async function dbConnect() {
   const connection = await mongoose
     .connect(
-      `mongodb://${process.env.MONGO_DB_USER}:${process.env.MONGO_DB_PASSWORD}@${process.env.MONGO_DB_HOST}:${process.env.MONGO_DB_PORT}/${process.env.MONGO_DB_NAME}`,
+      `${process.env.MONGO_PROTOCOL}://${process.env.MONGO_DB_USER}:${process.env.MONGO_DB_PASSWORD}@${process.env.MONGO_DB_HOST}/${process.env.MONGO_DB_NAME}`,
       {
         authSource: 'admin',
       },
