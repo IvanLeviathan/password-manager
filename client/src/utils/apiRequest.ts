@@ -15,7 +15,6 @@ const apiRequest = async (
   additionalHeaders = { ...defaultHeaders, ...additionalHeaders }
 
   const res = await axios({
-    // url: '//localhost:3000/api' + url,
     url: import.meta.env.VITE_FRONT_API_URL + url,
     method,
     data,
