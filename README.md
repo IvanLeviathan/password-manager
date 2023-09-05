@@ -1,4 +1,4 @@
-## standalone password manager
+## Standalone password manager
 
 Ecnrypt (AES) and store passwords with standalone (or not) MongoDB.
 
