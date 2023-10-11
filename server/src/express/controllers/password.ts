@@ -158,8 +158,8 @@ export const updatePassword = async (
 
   req.body.login = encrypt(req.body?.login)
   req.body.password = encrypt(req.body?.password)
-  if (!req.body.comment) req.body.comment = encrypt(req.body.comment)
 
+  if (!!req.body.comment) req.body.comment = encrypt(req.body.comment)
   const updatedPassword = await PasswordModel.findByIdAndUpdate(
     req.body._id,
     { ...req.body },
