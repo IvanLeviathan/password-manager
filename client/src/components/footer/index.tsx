@@ -8,7 +8,10 @@ const FooterComponent: FC<IFooter> = () => {
   return (
     <footer className={`mt-5 text-end bg-${context?.theme}`}>
       Copyright © 2023 - {new Date().getFullYear()}{' '}
-      <a target="_blank" href="https://github.com/IvanLeviathan">
+      <a
+        target="_blank"
+        href="https://github.com/IvanLeviathan/password-manager"
+      >
         IvanLeviathan
       </a>
     </footer>
