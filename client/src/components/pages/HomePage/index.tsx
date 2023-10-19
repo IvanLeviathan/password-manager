@@ -16,6 +16,7 @@ import { useActions } from '../../../hooks/useActions'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { IProject, ISort } from '../ProjectPage'
+import { ChromePicker, ColorChangeHandler, ColorResult } from 'react-color'
 
 interface IHomePage {}
 
@@ -24,6 +25,9 @@ const HomePage: FC<IHomePage> = () => {
   const [filterdProjects, setFilteredProjects] = useState<IProject[] | null>(
     null,
   )
+
+  const [color, setColor] = useState<string | undefined>(undefined)
+
   const [modalShow, setModalShow] = useState<boolean>(false)
   const [projectName, setProjectName] = useState<string>('')
   const [projectDescription, setProjectDescription] = useState<string>('')
@@ -78,7 +82,7 @@ const HomePage: FC<IHomePage> = () => {
     const res = await apiRequest(
       '/projects',
       'POST',
-      { name: projectName, description: projectDescription },
+      { name: projectName, description: projectDescription, color: color },
       { 'x-auth-token': localStorage.getItem('jwt') },
     )
 
@@ -120,6 +124,7 @@ const HomePage: FC<IHomePage> = () => {
         description: newObj.description,
         name: newObj.name,
         owner: newObj.owner,
+        color: newObj.color,
         sort: (index + 1) * 100,
       }
       sortUpdateObj.push({ _id: newProject._id, sort: newProject.sort })
@@ -128,6 +133,11 @@ const HomePage: FC<IHomePage> = () => {
     setFilteredProjects(newSortItems)
     return updateSorts(sortUpdateObj)
   }
+
+  const changeColor: ColorChangeHandler = (color: ColorResult) => {
+    setColor(color.hex)
+  }
+
   return (
     <>
       <Container>
@@ -171,16 +181,23 @@ const HomePage: FC<IHomePage> = () => {
                   </Card>
                 </Col>
               ) : (
-                filterdProjects.map((project) => (
-                  <Col lg={3} className="mb-4" key={project._id}>
-                    <Card onClick={() => selectProject(project._id)}>
-                      <Card.Body>
-                        <Card.Title>{project.name}</Card.Title>
-                        <Card.Text>{project.description}</Card.Text>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                ))
+                filterdProjects.map((project) => {
+                  return (
+                    <Col lg={3} className="mb-4" key={project._id}>
+                      <Card
+                        onClick={() => selectProject(project._id)}
+                        style={
+                          project.color ? { borderColor: project.color } : {}
+                        }
+                      >
+                        <Card.Body>
+                          <Card.Title>{project.name}</Card.Title>
+                          <Card.Text>{project.description}</Card.Text>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  )
+                })
               )}
             </ReactSortable>
           </Row>
@@ -211,6 +228,14 @@ const HomePage: FC<IHomePage> = () => {
                 placeholder={t('homePage.modal.projectDescriptionPlaceholder')}
                 onChange={(e) => setProjectDescription(e.target.value)}
                 value={projectDescription}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="projectColor">
+              <Form.Label>{t('homePage.modal.projectColor')}</Form.Label>
+              <ChromePicker
+                color={color}
+                onChangeComplete={changeColor}
+                onChange={changeColor}
               />
             </Form.Group>
           </Modal.Body>

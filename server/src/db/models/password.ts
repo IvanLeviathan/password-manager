@@ -7,6 +7,7 @@ export interface IPassword {
   password: string
   comment?: string | null
   sort?: number
+  color?: string
 }
 
 const passwordSchema = new Schema<IPassword>({
@@ -17,6 +18,7 @@ const passwordSchema = new Schema<IPassword>({
   password: { type: String, required: true },
   comment: { type: String, default: null },
   sort: { type: Number, default: 50 },
+  color: { type: String, default: undefined },
 })
 
 const PasswordModel = model<IPassword>('Password', passwordSchema)

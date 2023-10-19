@@ -46,6 +46,7 @@ export const createProject = async (
     owner: req.body.user.id,
     name: req.body.name,
     description: req.body.description,
+    color: req.body.color || undefined,
     sort: 100,
   })
 

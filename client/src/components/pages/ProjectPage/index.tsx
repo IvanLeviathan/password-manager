@@ -15,6 +15,7 @@ import { useActions } from '../../../hooks/useActions'
 import apiRequest from '../../../utils/apiRequest'
 import { useTranslation } from 'react-i18next'
 import { ItemInterface, ReactSortable } from 'react-sortablejs'
+import { ChromePicker, ColorChangeHandler, ColorResult } from 'react-color'
 
 export interface IProject {
   _id: string
@@ -22,6 +23,7 @@ export interface IProject {
   owner: string
   name: string
   description: string
+  color?: string
   sort: number
 }
 
@@ -39,6 +41,7 @@ interface IPassword {
   login: string
   password: string
   comment: string
+  color?: string
   sort: number
 }
 
@@ -56,6 +59,8 @@ const ProjectPage: FC<IProjectPage> = () => {
 
   const [newProjectName, setNewProjectName] = useState<string>('')
   const [newProjectDescription, setNewProjectDescription] = useState<string>('')
+
+  const [color, setColor] = useState<string | undefined>(undefined)
 
   const [deleteProjectModalShow, setDeleteProjectModalShow] =
     useState<boolean>(false)
@@ -126,6 +131,7 @@ const ProjectPage: FC<IProjectPage> = () => {
     loadPasswords(curProject._id)
     setNewProjectName(curProject.name)
     setNewProjectDescription(curProject.description)
+    setColor(curProject.color)
   }, [curProject])
 
   const updateProject = async (e: React.MouseEvent) => {
@@ -139,6 +145,7 @@ const ProjectPage: FC<IProjectPage> = () => {
         _id: curProject?._id,
         name: newProjectName,
         description: newProjectDescription,
+        color: color,
       },
       { 'x-auth-token': localStorage.getItem('jwt') },
     )
@@ -352,6 +359,10 @@ const ProjectPage: FC<IProjectPage> = () => {
     return updateSorts(sortUpdateObj)
   }
 
+  const changeColor: ColorChangeHandler = (color: ColorResult) => {
+    setColor(color.hex)
+  }
+
   const projectRow = () => {
     if (typeof curProject === 'undefined')
       return (
@@ -392,6 +403,14 @@ const ProjectPage: FC<IProjectPage> = () => {
                 placeholder={t('projectPage.projectDescriptionPlaceholder')}
                 onChange={(e) => setNewProjectDescription(e.target.value)}
                 value={newProjectDescription}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="projectColor">
+              <Form.Label>{t('projectPage.projectColor')}</Form.Label>
+              <ChromePicker
+                color={color}
+                onChangeComplete={changeColor}
+                onChange={changeColor}
               />
             </Form.Group>
           </Card.Body>

@@ -65,6 +65,7 @@ const ru = {
         projectDescription: 'Описание проекта',
         projectDescriptionPlaceholder:
           'Введите описание нового проекта (необязательно)',
+        projectColor: 'Цвет проекта (необязательно)',
         save: 'Сохранить',
         cancel: 'Отмена',
       },
@@ -81,6 +82,7 @@ const ru = {
       projectDescription: 'Описание проекта',
       projectDescriptionPlaceholder:
         'Введите описание нового проекта (необязательно)',
+      projectColor: 'Цвет проекта (необязательно)',
       deleteProjectModal: {
         deleteProject: 'Вы уверены что хотите удалить проект "{{projectName}}"',
         passwordsWillAlsoDeleted:

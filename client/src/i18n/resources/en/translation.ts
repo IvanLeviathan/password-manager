@@ -64,6 +64,7 @@ const en = {
         projectDescription: 'Project description',
         projectDescriptionPlaceholder:
           'Enter new project description (optional)',
+        projectColor: 'Project color (optional)',
         save: 'Save',
         cancel: 'Cancel',
       },
@@ -79,6 +80,7 @@ const en = {
       projectNamePlaceholder: 'Enter new project name',
       projectDescription: 'Project description',
       projectDescriptionPlaceholder: 'Enter new project description (optional)',
+      projectColor: 'Project color (optional)',
       deleteProjectModal: {
         deleteProject:
           'Are you sure you want to delete project "{{projectName}}"',

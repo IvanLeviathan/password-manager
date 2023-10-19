@@ -4,6 +4,7 @@ interface IProject {
   name: string
   description: string
   sort: number
+  color?: string
 }
 
 const projectSchema = new Schema<IProject>({
@@ -11,6 +12,7 @@ const projectSchema = new Schema<IProject>({
   name: { type: String, required: true },
   description: { type: String },
   sort: { type: Number, default: 50 },
+  color: { type: String, default: undefined },
 })
 
 const ProjectModel = model<IProject>('Project', projectSchema)
