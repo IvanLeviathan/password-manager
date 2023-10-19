@@ -383,7 +383,7 @@ const ProjectPage: FC<IProjectPage> = () => {
         </Card>
       )
     return (
-      <Card>
+      <Card style={color ? { borderColor: color } : {}}>
         <Form>
           <Card.Body>
             <Form.Group className="mb-3" controlId="projectName">
