@@ -16,7 +16,7 @@ const passwordSchema = new Schema<IPassword>({
   login: { type: String, required: true },
   password: { type: String, required: true },
   comment: { type: String, default: null },
-  sort: { type: Number, default: 100 },
+  sort: { type: Number, default: 50 },
 })
 
 const PasswordModel = model<IPassword>('Password', passwordSchema)

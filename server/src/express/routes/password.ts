@@ -5,6 +5,7 @@ import {
   createPassword,
   deletePassword,
   getPasswords,
+  sortPasswords,
   updatePassword,
 } from '../controllers/password'
 const passwordRoutes = Router()
@@ -27,6 +28,11 @@ passwordRoutes.put('/', authMiddleware, (req, res) => {
 
 passwordRoutes.delete('/', authMiddleware, (req, res) => {
   deletePassword(req, res)
+})
+
+//sort update
+passwordRoutes.post('/sort', authMiddleware, (req, res) => {
+  sortPasswords(req, res)
 })
 
 export default passwordRoutes

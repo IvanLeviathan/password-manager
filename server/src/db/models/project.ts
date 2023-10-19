@@ -10,7 +10,7 @@ const projectSchema = new Schema<IProject>({
   owner: { type: Schema.Types.ObjectId, ref: 'User' },
   name: { type: String, required: true },
   description: { type: String },
-  sort: { type: Number, default: 500 },
+  sort: { type: Number, default: 50 },
 })
 
 const ProjectModel = model<IProject>('Project', projectSchema)

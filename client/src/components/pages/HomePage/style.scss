@@ -1,6 +1,9 @@
 .projects {
   .card {
-    cursor: pointer;
+    cursor: move; /* fallback if grab cursor is unsupported */
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
     transition: all 0.25s ease;
     height: 100%;
     &:hover {

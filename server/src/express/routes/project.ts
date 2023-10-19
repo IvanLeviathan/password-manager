@@ -5,6 +5,7 @@ import {
   deleteProject,
   getProject,
   getProjects,
+  sortProjects,
   updateProject,
 } from '../controllers/project'
 const projectsRoutes = Router()
@@ -27,6 +28,11 @@ projectsRoutes.put('/', authMiddleware, (req, res) => {
 
 projectsRoutes.delete('/', authMiddleware, (req, res) => {
   deleteProject(req, res)
+})
+
+//sort update
+projectsRoutes.post('/sort', authMiddleware, (req, res) => {
+  sortProjects(req, res)
 })
 
 export default projectsRoutes

@@ -1,4 +1,5 @@
 import React, { FC, useState, useEffect } from 'react'
+import { ItemInterface, ReactSortable } from 'react-sortablejs'
 import './style.scss'
 import {
   Button,
@@ -14,9 +15,10 @@ import apiRequest from '../../../utils/apiRequest'
 import { useActions } from '../../../hooks/useActions'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { IProject } from '../ProjectPage'
+import { IProject, ISort } from '../ProjectPage'
 
 interface IHomePage {}
+
 const HomePage: FC<IHomePage> = () => {
   const [projects, setProjects] = useState<IProject[] | null>(null)
   const [filterdProjects, setFilteredProjects] = useState<IProject[] | null>(
@@ -50,12 +52,19 @@ const HomePage: FC<IHomePage> = () => {
   }, [])
 
   useEffect(() => {
+    if (projects)
+      projects.sort((a, b) => {
+        if (a.sort > b.sort) return 1
+        if (a.sort < b.sort) return -1
+        return 0
+      })
     if (!filterString.length) return setFilteredProjects(projects)
     if (!projects) return setFilteredProjects(projects)
 
     const fProjects = projects.filter((project) =>
       project.name.toLowerCase().includes(filterString),
     )
+
     setFilteredProjects(fProjects)
   }, [filterString, projects])
 
@@ -87,6 +96,38 @@ const HomePage: FC<IHomePage> = () => {
     setModalShow(false)
   }
 
+  const updateSorts = async (sortArr: ISort[]) => {
+    const res = await apiRequest(
+      '/projects/sort',
+      'POST',
+      { newItemsSort: sortArr },
+      {
+        'x-auth-token': localStorage.getItem('jwt'),
+      },
+    )
+    if (res.status !== 200) {
+      addAlert({ text: t(`apiAnswers.${res.statusText}`), type: 'danger' })
+    }
+  }
+
+  function onSortChange(newState: ItemInterface[]) {
+    const sortUpdateObj: ISort[] = []
+
+    const newSortItems: IProject[] = newState.map((newObj, index) => {
+      const newProject: IProject = {
+        id: newObj.id,
+        _id: newObj._id,
+        description: newObj.description,
+        name: newObj.name,
+        owner: newObj.owner,
+        sort: (index + 1) * 100,
+      }
+      sortUpdateObj.push({ _id: newProject._id, sort: newProject.sort })
+      return newProject
+    })
+    setFilteredProjects(newSortItems)
+    return updateSorts(sortUpdateObj)
+  }
   return (
     <>
       <Container>
@@ -117,16 +158,21 @@ const HomePage: FC<IHomePage> = () => {
           <Spinner animation="border" />
         ) : (
           <Row className="projects">
-            {!filterdProjects.length ? (
-              <Col>
-                <Card>
-                  <Card.Body>{t('homePage.noProjects')}</Card.Body>
-                </Card>
-              </Col>
-            ) : (
-              filterdProjects.map((project) => {
-                return (
-                  <Col lg={3} key={project._id} className="mb-4">
+            <ReactSortable
+              className={'row'}
+              list={filterdProjects}
+              setList={onSortChange}
+              animation={250}
+            >
+              {!filterdProjects.length ? (
+                <Col>
+                  <Card>
+                    <Card.Body>{t('homePage.noProjects')}</Card.Body>
+                  </Card>
+                </Col>
+              ) : (
+                filterdProjects.map((project) => (
+                  <Col lg={3} className="mb-4" key={project._id}>
                     <Card onClick={() => selectProject(project._id)}>
                       <Card.Body>
                         <Card.Title>{project.name}</Card.Title>
@@ -134,9 +180,9 @@ const HomePage: FC<IHomePage> = () => {
                       </Card.Body>
                     </Card>
                   </Col>
-                )
-              })
-            )}
+                ))
+              )}
+            </ReactSortable>
           </Row>
         )}
       </Container>

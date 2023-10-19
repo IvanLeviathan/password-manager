@@ -14,16 +14,24 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useActions } from '../../../hooks/useActions'
 import apiRequest from '../../../utils/apiRequest'
 import { useTranslation } from 'react-i18next'
+import { ItemInterface, ReactSortable } from 'react-sortablejs'
 
 export interface IProject {
   _id: string
+  id: string | number
   owner: string
   name: string
   description: string
   sort: number
 }
 
+export interface ISort {
+  _id: string
+  sort: number
+}
+
 interface IPassword {
+  id: string | number
   _id: string
   project: string
   owner: string
@@ -35,6 +43,7 @@ interface IPassword {
 }
 
 interface IProjectPage {}
+
 const ProjectPage: FC<IProjectPage> = () => {
   const { projectId } = useParams()
   const [curProject, setCurProject] = useState<IProject | null | undefined>(
@@ -82,6 +91,17 @@ const ProjectPage: FC<IProjectPage> = () => {
     }
   }
 
+  const sortPasswords = (passwords: IPassword[]) => {
+    const sortedPasswords = [...passwords]
+    sortedPasswords.sort((a, b) => {
+      if (a.sort > b.sort) return 1
+      if (a.sort < b.sort) return -1
+      return 0
+    })
+
+    return sortedPasswords
+  }
+
   const loadPasswords = async (projectId: string) => {
     const res = await apiRequest(
       `/password/${projectId}`,
@@ -90,7 +110,8 @@ const ProjectPage: FC<IProjectPage> = () => {
       { 'x-auth-token': localStorage.getItem('jwt') },
     )
     if (res.status === 200) {
-      setPasswords(res.data.data)
+      const passwords = res.data.data as IPassword[]
+      setPasswords(sortPasswords(passwords))
     } else {
       setPasswords(null)
     }
@@ -296,6 +317,41 @@ const ProjectPage: FC<IProjectPage> = () => {
     }
   }
 
+  const updateSorts = async (sortArr: ISort[]) => {
+    const res = await apiRequest(
+      '/password/sort',
+      'POST',
+      { newItemsSort: sortArr },
+      {
+        'x-auth-token': localStorage.getItem('jwt'),
+      },
+    )
+    if (res.status !== 200) {
+      addAlert({ text: t(`apiAnswers.${res.statusText}`), type: 'danger' })
+    }
+  }
+
+  const onSortChange = async (newState: ItemInterface[]) => {
+    const sortUpdateObj: ISort[] = []
+    const newSortItems: IPassword[] = newState.map((newObj, index) => {
+      const newPassword: IPassword = {
+        id: newObj._id,
+        _id: newObj._id,
+        comment: newObj.comment,
+        login: newObj.login,
+        name: newObj.name,
+        owner: newObj.owner,
+        password: newObj.password,
+        project: newObj.project,
+        sort: (index + 1) * 100,
+      }
+      sortUpdateObj.push({ _id: newPassword._id, sort: newPassword.sort })
+      return newPassword
+    })
+    setPasswords(newSortItems)
+    return updateSorts(sortUpdateObj)
+  }
+
   const projectRow = () => {
     if (typeof curProject === 'undefined')
       return (
@@ -376,77 +432,88 @@ const ProjectPage: FC<IProjectPage> = () => {
           </Card>
         </Col>
       )
-    return passwords.map((password) => {
-      return (
-        <Col lg={3} className="mb-4" key={password._id}>
-          <Card id={`password-card-${password._id}`}>
-            <Form>
-              <Card.Header>
-                <Form.Control
-                  type="text"
-                  data-type="passwordName"
-                  defaultValue={password.name}
-                  required
-                />
-              </Card.Header>
-              <Card.Body>
-                <p>
-                  <Form.Label>{t('projectPage.passwordCard.login')}</Form.Label>
+    return (
+      <ReactSortable
+        className={'row'}
+        list={passwords}
+        setList={onSortChange}
+        animation={250}
+      >
+        {passwords.map((password) => {
+          return (
+            <Col lg={3} className="mb-4" key={password._id}>
+              <Card id={`password-card-${password._id}`}>
+                <Form>
+                  <Card.Header>
+                    <Form.Control
+                      type="text"
+                      data-type="passwordName"
+                      defaultValue={password.name}
+                      required
+                    />
+                  </Card.Header>
+                  <Card.Body>
+                    <p>
+                      <Form.Label>
+                        {t('projectPage.passwordCard.login')}
+                      </Form.Label>
 
-                  <Form.Control
-                    type="text"
-                    defaultValue={password.login}
-                    data-type="passwordLogin"
-                    required
-                  />
-                </p>
-                <p>
-                  <Form.Label>
-                    {t('projectPage.passwordCard.password')}
-                  </Form.Label>
-                  <Form.Control
-                    type="text"
-                    defaultValue={password.password}
-                    data-type="passwordPassword"
-                    required
-                  />
-                </p>
-                <p>
-                  <Form.Label>
-                    {t('projectPage.passwordCard.comment')}
-                  </Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    defaultValue={password.comment}
-                    data-type="passwordComment"
-                  />
-                </p>
-              </Card.Body>
-              <Card.Footer className="d-flex justify-content-between">
-                <Button
-                  size="sm"
-                  onClick={(e) => updatePassword(password._id, e)}
-                  type="submit"
-                >
-                  {t('projectPage.passwordCard.update')}
-                </Button>
-                <Button
-                  variant="danger"
-                  className="ms-2"
-                  size="sm"
-                  onClick={() => {
-                    setPasswordToDelete(password._id)
-                    setDeletePasswordModalShow(true)
-                  }}
-                >
-                  {t('projectPage.passwordCard.delete')}
-                </Button>
-              </Card.Footer>
-            </Form>
-          </Card>
-        </Col>
-      )
-    })
+                      <Form.Control
+                        type="text"
+                        defaultValue={password.login}
+                        data-type="passwordLogin"
+                        required
+                      />
+                    </p>
+                    <p>
+                      <Form.Label>
+                        {t('projectPage.passwordCard.password')}
+                      </Form.Label>
+                      <Form.Control
+                        type="text"
+                        defaultValue={password.password}
+                        data-type="passwordPassword"
+                        required
+                      />
+                    </p>
+                    <p>
+                      <Form.Label>
+                        {t('projectPage.passwordCard.comment')}
+                      </Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        defaultValue={password.comment}
+                        data-type="passwordComment"
+                      />
+                    </p>
+                  </Card.Body>
+                  <Card.Footer className="d-flex justify-content-between">
+                    <Button
+                      size="sm"
+                      onClick={(e) => updatePassword(password._id, e)}
+                      type="submit"
+                    >
+                      {t('projectPage.passwordCard.update')}
+                    </Button>
+                    <Button
+                      variant="danger"
+                      className="ms-2"
+                      size="sm"
+                      onClick={() => {
+                        setPasswordToDelete(password._id)
+                        setDeletePasswordModalShow(true)
+                      }}
+                    >
+                      {t('projectPage.passwordCard.delete')}
+                    </Button>
+                  </Card.Footer>
+                </Form>
+              </Card>
+            </Col>
+          )
+        })}
+      </ReactSortable>
+    )
   }
 
   return (

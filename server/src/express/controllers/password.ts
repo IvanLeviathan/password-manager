@@ -2,6 +2,34 @@ import { Request, Response } from 'express'
 import PasswordModel, { IPassword } from '../../db/models/password'
 import { decrypt, encrypt } from '../../utils/crypto'
 
+export const sortPasswords = async (
+  req: Request,
+  res: Response,
+): Promise<Response> => {
+  if (!req.body.newItemsSort)
+    return res.status(400).json({
+      status: 400,
+      message: 'NoSortItemsProvided',
+    })
+  const newSorts = req.body.newItemsSort as { _id: string; sort: number }[]
+
+  newSorts.map(async (newSort) => {
+    const updatedProject = await PasswordModel.findByIdAndUpdate(
+      newSort._id,
+      { sort: newSort.sort },
+      { new: true },
+    )
+      .exec()
+      .catch((e) => console.log(e))
+    return newSort
+  })
+
+  return res.status(200).json({
+    status: 200,
+    message: 'Ok',
+  })
+}
+
 export const createPassword = async (
   req: Request,
   res: Response,
